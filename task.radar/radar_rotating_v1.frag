@@ -7,7 +7,7 @@ precision mediump float;
 #define ANGLEOFFSET 45.0
 #define MAINCIRCLERADIUS 0.75
 #define ANGLESTART 0.0
-#define ANGLEEND 60.0
+#define ANGLEEND 90.0
 
 uniform vec2 u_resolution;
 uniform float u_time;
@@ -28,6 +28,7 @@ float angle_from_vector(in vec2 _center, in vec2 _st) {
 }
 
 void main(){
+    vec3 radarColor = vec3(0.5,0.8,0.85);
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
 	st = st * 2.0 - 1.0;
     
@@ -48,17 +49,37 @@ void main(){
     }
     
     float alpha = 1.0;
+    float minAlphaStep = 0.0;
+    float maxAlphaStep = 1.5;
     if (startPointAngle < endPointAngle) {
-    	alpha = smoothstep(0.0, 1.0, 1.0 - (angleOfPoint - startPointAngle) / (endPointAngle - startPointAngle));
+    	alpha = smoothstep(minAlphaStep, maxAlphaStep, 1.0 - (angleOfPoint - startPointAngle) / (endPointAngle - startPointAngle));
     } else {
 		if (angleOfPoint >= startPointAngle) {
-	    	alpha = smoothstep(0.0, 1.0, 1.0 - (angleOfPoint - startPointAngle) / (endPointAngle + (360.0 - startPointAngle)));
+	    	alpha = smoothstep(minAlphaStep, maxAlphaStep, 1.0 - (angleOfPoint - startPointAngle) / (endPointAngle + (360.0 - startPointAngle)));
         }
         
         if (angleOfPoint <= endPointAngle) {
-            alpha = smoothstep(0.0, 1.0, 1.0 - (angleOfPoint + (360.0 - startPointAngle)) / (endPointAngle + (360.0 - startPointAngle)));
+            alpha = smoothstep(minAlphaStep, maxAlphaStep, 1.0 - (angleOfPoint + (360.0 - startPointAngle)) / (endPointAngle + (360.0 - startPointAngle)));
         }
     }
+    
+    alpha *= 0.5;
+    // add line for start
      
-	gl_FragColor = vec4(color, alpha);
+	gl_FragColor = vec4(color * radarColor, alpha);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
